@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Home — Vahan Mitra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            background: #e8eceb;
+        }
+        .phone-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            position: relative;
+            background: #f0f4f3;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .phone-frame::-webkit-scrollbar { width: 0; }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            background: #1a5c54;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .status-icons { display: flex; gap: 5px; align-items: center; }
+        .status-icons i { font-size: 11px; }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: #1a5c54;
+            color: white;
+            position: sticky;
+            top: 32px;
+            z-index: 99;
+        }
+        .top-bar-left { display: flex; align-items: center; gap: 12px; }
+        .hamburger { font-size: 22px; cursor: pointer; padding: 4px; }
+        .top-logo { display: flex; align-items: center; gap: 8px; }
+        .top-logo img { width: 34px; height: 34px; border-radius: 10px; }
+        .top-logo-text { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 17px; }
+        .top-bar-right { display: flex; gap: 16px; }
+        .top-bar-right i { font-size: 20px; cursor: pointer; position: relative; }
+        .notif-badge {
+            position: absolute;
+            top: -4px; right: -6px;
+            width: 16px; height: 16px;
+            background: #d4a843;
+            border-radius: 50%;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #1a5c54;
+        }
+
+        /* Location Section */
+        .location-section {
+            background: white;
+            margin: 0;
+            padding: 18px;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .search-bar {
+            background: #f0f4f3;
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        .search-bar:active { border-color: #2d8a7e; }
+        .search-bar i { color: #1a5c54; font-size: 18px; }
+        .search-bar span { color: #999; font-size: 15px; flex: 1; }
+        .search-bar .mic { color: #d4a843; }
+
+        .location-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+        .location-dots {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 0;
+            gap: 3px;
+        }
+        .dot-green { width: 10px; height: 10px; border-radius: 50%; background: #27ae60; border: 2px solid #1a9e50; }
+        .dot-line { width: 2px; flex: 1; background: #ddd; min-height: 20px; }
+        .dot-red { width: 10px; height: 10px; border-radius: 50%; background: #e74c3c; border: 2px solid #c0392b; }
+
+        .location-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .loc-input {
+            background: #f8f9fa;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 13px 14px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+            width: 100%;
+        }
+        .loc-input:focus { border-color: #2d8a7e; }
+        .loc-input::placeholder { color: #bbb; }
+        .swap-btn {
+            position: absolute;
+            right: 30px;
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #1a5c54;
+            transition: all 0.3s;
+            z-index: 5;
+        }
+        .swap-btn:active { background: #1a5c54; color: white; transform: rotate(180deg); }
+
+        .location-row { position: relative; }
+
+        /* Recent Places */
+        .recent-places {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .recent-places::-webkit-scrollbar { display: none; }
+        .recent-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0f4f3;
+            border-radius: 20px;
+            padding: 8px 14px;
+            white-space: nowrap;
+            font-size: 12px;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        .recent-chip:active { background: #1a5c54; color: white; }
+        .recent-chip i { font-size: 12px; color: #1a5c54; }
+        .recent-chip:active i { color: white; }
+
+        /* Ride Types */
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            padding: 18px 18px 12px;
+        }
+        .ride-types {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 0 18px 15px;
+        }
+        .ride-types::-webkit-scrollbar { display: none; }
+        .ride-card {
+            min-width: 110px;
+            background: white;
+            border-radius: 16px;
+            padding: 16px 14px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+        }
+        .ride-card:active, .ride-card.selected {
+            border-color: #1a5c54;
+            background: #f0f9f7;
+            transform: scale(0.97);
+        }
+        .ride-card .ride-icon { font-size: 32px; margin-bottom: 8px; }
+        .ride-card .ride-name {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+        }
+        .ride-card .ride-price {
+            font-size: 12px;
+            color: #1a5c54;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Map Area */
+        .map-area {
+            margin: 0 18px;
+            height: 180px;
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .map-odisha {
+            font-size: 60px;
+            opacity: 0.3;
+        }
+        .map-label {
+            background: rgba(26,92,84,0.9);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+        }
+        .map-pin {
+            position: absolute;
+            top: 40%;
+            left: 55%;
+            font-size: 28px;
+            animation: pinBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+        @keyframes pinBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        /* SVG map decorations */
+        .map-roads {
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+        }
+        .map-roads svg { width: 100%; height: 100%; }
+
+        /* Promo Banner Carousel */
+        .promo-section {
+            padding: 18px;
+        }
+        .promo-carousel {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+        }
+        .promo-carousel::-webkit-scrollbar { display: none; }
+        .promo-card {
+            min-width: 280px;
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            scroll-snap-align: start;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .promo-card.p1 { background: linear-gradient(135deg, #1a5c54, #2d8a7e); }
+        .promo-card.p2 { background: linear-gradient(135deg, #d4a843, #c49535); color: #333; }
+        .promo-card.p3 { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+        .promo-card h3 { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+        .promo-card p { font-size: 12px; opacity: 0.9; }
+        .promo-code {
+            display: inline-block;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+        .promo-emoji {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 40px;
+            opacity: 0.3;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 5px 18px 18px;
+        }
+        .quick-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 12px;
+        }
+        .quick-btn .qicon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: transform 0.2s;
+        }
+        .quick-btn:active .qicon { transform: scale(0.9); }
+        .quick-btn .qicon.q1 { background: #e8f5e9; color: #2e7d32; }
+        .quick-btn .qicon.q2 { background: #e3f2fd; color: #1565c0; }
+        .quick-btn .qicon.q3 { background: #fff3e0; color: #e65100; }
+        .quick-btn span { font-size: 11px; color: #666; font-weight: 500; }
+
+        /* Spacer for bottom nav */
+        .bottom-spacer { height: 80px; }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 14px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            border-radius: 20px 20px 0 0;
+            z-index: 100;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 4px 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .nav-item i { font-size: 20px; color: #999; transition: color 0.2s; }
+        .nav-item span { font-size: 10px; color: #999; font-weight: 500; }
+        .nav-item.active i { color: #1a5c54; }
+        .nav-item.active span { color: #1a5c54; font-weight: 600; }
+        .nav-item:active i { transform: scale(0.9); }
+
+        /* Side Menu Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .menu-overlay.open { opacity: 1; pointer-events: all; }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: white;
+            z-index: 201;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            box-shadow: 4px 0 25px rgba(0,0,0,0.15);
+        }
+        .side-menu.open { left: calc(50% - 210px); }
+        @media (max-width: 420px) {
+            .side-menu.open { left: 0; }
+        }
+
+        .menu-header {
+            background: linear-gradient(135deg, #1a5c54, #2d8a7e);
+            padding: 40px 20px 25px;
+            color: white;
+        }
+        .menu-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .menu-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .menu-phone { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+        .menu-edit {
+            font-size: 12px;
+            color: #d4a843;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .menu-items { padding: 10px 0; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 22px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            color: #333;
+        }
+        .menu-item:active { background: #f0f4f3; }
+        .menu-item i { font-size: 18px; color: #1a5c54; width: 24px; text-align: center; }
+        .menu-item span { font-size: 14px; font-weight: 500; }
+        .menu-item .badge {
+            margin-left: auto;
+            background: #d4a843;
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .menu-divider { height: 1px; background: #f0f0f0; margin: 5px 20px; }
+        .menu-item.logout i { color: #e74c3c; }
+        .menu-item.logout span { color: #e74c3c; }
+
+        .menu-footer {
+            padding: 15px 22px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 11px;
+            color: #bbb;
+            text-align: center;
+        }
+
+        /* Location Inputs & Suggestions */
+        .location-field-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .suggestion-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            border: 1px solid #d4e5e0;
+            max-height: 260px;
+            overflow-y: auto;
+            z-index: 500;
+        }
+        .suggestion-dropdown.show { display: block; }
+        .suggestion-header {
+            padding: 8px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #1a5c54;
+            background: #e8f4f1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        .suggestion-item {
+            padding: 11px 14px;
+            font-size: 13.5px;
+            color: #222;
+            cursor: pointer;
+            border-bottom: 1px solid #f2f5f4;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: background 0.15s;
+        }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover, .suggestion-item:active {
+            background: #f0f9f7;
+        }
+        .sugg-icon {
+            color: #d4a843;
+            font-size: 14px;
+            margin-top: 3px;
+        }
+        .sugg-title {
+            font-weight: 600;
+            color: #222;
+        }
+        .sugg-desc {
+            font-size: 11px;
+            color: #777;
+            margin-top: 1px;
+        }
+        .sugg-badge {
+            color: #1a5c54;
+            font-weight: 600;
+        }
+
+        /* Notification Dropdown */
+        .notif-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 15px;
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 150;
+            overflow: hidden;
+        }
+        .notif-dropdown.show { display: block; }
+        .notif-header {
+            padding: 14px 16px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .notif-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f8f8f8;
+            display: flex;
+            gap: 10px;
+        }
+        .notif-icon {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .notif-icon.green { background: #e8f5e9; }
+        .notif-icon.gold { background: #fff8e1; }
+        .notif-text { font-size: 13px; color: #555; line-height: 1.4; }
+        .notif-time { font-size: 11px; color: #bbb; margin-top: 3px; }
+    </style>
+</head>
+<body>
+    <!-- Side Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="menu-avatar"><i class="fas fa-user"></i></div>
+            <div class="menu-name">User</div>
+            <div class="menu-phone">+91 98765 43210</div>
+            <div class="menu-edit" onclick="window.location.href='profile.html'">View & Edit Profile →</div>
+        </div>
+        <div class="menu-items">
+            <a class="menu-item" href="rides.html"><i class="fas fa-history"></i><span>My Rides</span></a>
+            <a class="menu-item" href="wallet.html"><i class="fas fa-wallet"></i><span>Wallet</span><span class="badge">₹0.00</span></a>
+            <a class="menu-item" href="offers.html"><i class="fas fa-gift"></i><span>Offers & Coupons</span><span class="badge">3</span></a>
+            <a class="menu-item" onclick="showToast('Referral link copied!')"><i class="fas fa-share-alt"></i><span>Refer & Earn</span></a>
+            <div class="menu-divider"></div>
+            <a class="menu-item" href="safety.html"><i class="fas fa-shield-alt"></i><span>Safety</span></a>
+            <a class="menu-item" href="support.html"><i class="fas fa-headset"></i><span>Support</span></a>
+            <a class="menu-item" href="settings.html"><i class="fas fa-cog"></i><span>Settings</span></a>
+            <a class="menu-item" onclick="showToast('Vahan Mitra v1.0.0 — Made in Odisha ❤️')"><i class="fas fa-info-circle"></i><span>About</span></a>
+            <div class="menu-divider"></div>
+            <a class="menu-item logout" onclick="if(confirm('Are you sure you want to logout?')) window.location.href='login.html'"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </div>
+        <div class="menu-footer">Vahan Mitra v1.0.0 · Made with ❤️ in Odisha</div>
+    </div>
+
+    <div class="phone-frame" id="mainFrame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <div class="status-icons">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <div class="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+                <div class="top-logo">
+                    <img src="WhatsApp Image 2026-10-05 at 8.09.28 PM.jpeg" alt="Logo">
+                    <span class="top-logo-text">Vahan Mitra</span>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <i class="fas fa-bell" onclick="toggleNotif()" style="position:relative">
+                    <span class="notif-badge">2</span>
+                </i>
+                <i class="fas fa-user-circle" onclick="window.location.href='profile.html'"></i>
+            </div>
+        </div>
+
+        <!-- Notification Dropdown -->
+        <div class="notif-dropdown" id="notifDrop">
+            <div class="notif-header">Notifications</div>
+            <div class="notif-item">
+                <div class="notif-icon gold">🎁</div>
+                <div>
+                    <div class="notif-text"><strong>Welcome!</strong> Get 50% off your first ride with code VAHANFIRST</div>
+                    <div class="notif-time">Just now</div>
+                </div>
+            </div>
+            <div class="notif-item">
+                <div class="notif-icon green">🎉</div>
+                <div>
+                    <div class="notif-text">Vahan Mitra is now live in all 30 districts of Odisha!</div>
+                    <div class="notif-time">2 mins ago</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="location-section">
+            <div class="search-bar" onclick="document.getElementById('pickupInput').focus()">
+                <i class="fas fa-search"></i>
+                <span>Where are you going?</span>
+                <i class="fas fa-microphone mic"></i>
+            </div>
+
+            <div class="location-row" style="position:relative;">
+                <div class="location-inputs">
+                    <div class="location-dots">
+                        <div class="dot-green"></div>
+                        <div class="dot-line"></div>
+                        <div class="dot-red"></div>
+                    </div>
+                    <div class="location-fields">
+                        <div class="location-field-wrapper">
+                            <input type="text" class="loc-input" id="pickupInput" placeholder="📍 Pickup location (Type to search...)" autocomplete="off" onfocus="handleLocationFocus('pickup')" oninput="handleLocationInput('pickup')">
+                            <div class="suggestion-dropdown" id="pickupSuggestions"></div>
+                        </div>
+                        <div class="location-field-wrapper">
+                            <input type="text" class="loc-input" id="dropInput" placeholder="📍 Drop location (Type to search...)" autocomplete="off" onfocus="handleLocationFocus('drop')" oninput="handleLocationInput('drop')">
+                            <div class="suggestion-dropdown" id="dropSuggestions"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="swap-btn" onclick="swapLocations()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);">
+                    <i class="fas fa-exchange-alt fa-rotate-90"></i>
+                </button>
+            </div>
+
+            <div class="recent-places">
+                <div class="recent-chip" onclick="setLocation('Fuladi Chhak & Market')"><i class="fas fa-location-arrow" style="color:#d4a843"></i>Fuladi Chhak</div>
+                <div class="recent-chip" onclick="setLocation('Nagram Gram Panchayat Office')"><i class="fas fa-landmark" style="color:#1a5c54"></i>Nagram GP</div>
+                <div class="recent-chip" onclick="setLocation('Balasore Railway Station')"><i class="fas fa-train"></i>Balasore Station</div>
+                <div class="recent-chip" onclick="setLocation('Chandipur Sea Beach')"><i class="fas fa-umbrella-beach" style="color:#d4a843"></i>Chandipur Beach</div>
+                <div class="recent-chip" onclick="setLocation('OT Road Sahadevkhunta Bus Stand')"><i class="fas fa-bus"></i>OT Road Bus Stand</div>
+                <div class="recent-chip" onclick="setLocation('FM Autonomous College Balasore')"><i class="fas fa-graduation-cap"></i>FM College</div>
+                <div class="recent-chip" onclick="setLocation('Khirachora Gopinatha Temple Remuna')"><i class="fas fa-gopuram"></i>Remuna Temple</div>
+                <div class="recent-chip" onclick="setLocation('NOCCI Business Park Bampada')"><i class="fas fa-briefcase"></i>NOCCI Bampada</div>
+                <div class="recent-chip" onclick="setLocation('Panchalingeswar Temple Nilagiri')"><i class="fas fa-mountain"></i>Panchalingeswar</div>
+            </div>
+        </div>
+
+        <!-- Ride Types -->
+        <div class="section-title">Choose your ride</div>
+        <div class="ride-types">
+            <div class="ride-card selected" onclick="selectRide(this, 'Bike', 5)">
+                <div class="ride-icon">🏍️</div>
+                <div class="ride-name">Bike</div>
+                <div class="ride-price">₹5/km</div>
+            </div>
+            <div class="ride-card" onclick="selectRide(this, 'Auto', 8)">
+                <div class="ride-icon">🛺</div>
+                <div class="ride-name">Auto</div>
+                <div class="ride-price">₹8/km</div>
+            </div>
+            <div class="ride-card" onclick="selectRide(this, 'Mini Cab', 12)">
+                <div class="ride-icon">🚗</div>
+                <div class="ride-name">Mini Cab</div>
+                <div class="ride-price">₹12/km</div>
+            </div>
+            <div class="ride-card" onclick="selectRide(this, 'Sedan', 15)">
+                <div class="ride-icon">🚙</div>
+                <div class="ride-name">Sedan</div>
+                <div class="ride-price">₹15/km</div>
+            </div>
+            <div class="ride-card" onclick="selectRide(this, 'Parcel', 10)">
+                <div class="ride-icon">📦</div>
+                <div class="ride-name">Parcel</div>
+                <div class="ride-price">₹10/km</div>
+            </div>
+        </div>
+
+        <!-- Map Area -->
+        <div class="map-area">
+            <div class="map-roads">
+                <svg viewBox="0 0 400 180">
+                    <path d="M0,90 Q100,30 200,90 T400,90" stroke="#2d8a7e" stroke-width="2" fill="none" stroke-dasharray="8,4"/>
+                    <path d="M50,0 Q200,100 350,20" stroke="#1a5c54" stroke-width="1.5" fill="none" stroke-dasharray="6,3"/>
+                    <path d="M0,150 Q150,80 300,160" stroke="#2d8a7e" stroke-width="1" fill="none" stroke-dasharray="4,4"/>
+                    <circle cx="200" cy="90" r="30" fill="rgba(26,92,84,0.08)" stroke="rgba(26,92,84,0.15)" stroke-width="1"/>
+                    <circle cx="200" cy="90" r="50" fill="none" stroke="rgba(26,92,84,0.08)" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="map-pin">📍</div>
+            <div class="map-overlay">
+                <div class="map-label"><i class="fas fa-location-dot"></i> &nbsp;Odisha, India</div>
+            </div>
+        </div>
+
+        <!-- Promo Carousel -->
+        <div class="promo-section">
+            <div class="section-title" style="padding:0 0 12px;">Offers for you</div>
+            <div class="promo-carousel">
+                <div class="promo-card p1">
+                    <div class="promo-emoji">🎉</div>
+                    <h3>50% OFF First Ride!</h3>
+                    <p>Welcome to Vahan Mitra. Max discount ₹100</p>
+                    <div class="promo-code">VAHANFIRST</div>
+                </div>
+                <div class="promo-card p2">
+                    <div class="promo-emoji">🌴</div>
+                    <h3>Odisha Special!</h3>
+                    <p>₹30 off on all rides above ₹100</p>
+                    <div class="promo-code">ODISHA30</div>
+                </div>
+                <div class="promo-card p3">
+                    <div class="promo-emoji">🎊</div>
+                    <h3>Weekend Bonanza</h3>
+                    <p>20% off all weekend rides!</p>
+                    <div class="promo-code">WEEKEND20</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section-title">Quick Services</div>
+        <div class="quick-actions">
+            <div class="quick-btn" onclick="showToast('Rentals coming soon!')">
+                <div class="qicon q1"><i class="fas fa-clock"></i></div>
+                <span>Rentals</span>
+            </div>
+            <div class="quick-btn" onclick="showToast('Outstation coming soon!')">
+                <div class="qicon q2"><i class="fas fa-road"></i></div>
+                <span>Outstation</span>
+            </div>
+            <div class="quick-btn" onclick="showToast('Packages coming soon!')">
+                <div class="qicon q3"><i class="fas fa-box"></i></div>
+                <span>Packages</span>
+            </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a class="nav-item active" href="home.html"><i class="fas fa-house"></i><span>Home</span></a>
+            <a class="nav-item" href="rides.html"><i class="fas fa-car"></i><span>Rides</span></a>
+            <a class="nav-item" href="wallet.html"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+            <a class="nav-item" href="offers.html"><i class="fas fa-gift"></i><span>Offers</span></a>
+            <a class="nav-item" href="profile.html"><i class="fas fa-user"></i><span>Profile</span></a>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" style="position:fixed;top:30px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a5c54;color:white;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:500;z-index:1000;transition:transform 0.4s ease;box-shadow:0 8px 25px rgba(0,0,0,0.2);"></div>
+
+    <script src="balasore_data.js"></script>
+    <script>
+        // Odisha Districts Fallback
+        var districts = ['Angul','Balangir','Balasore','Bargarh','Bhadrak','Boudh','Cuttack','Deogarh','Dhenkanal','Gajapati','Ganjam','Jagatsinghpur','Jajpur','Jharsuguda','Kalahandi','Kandhamal','Kendrapara','Kendujhar','Khordha','Koraput','Malkangiri','Mayurbhanj','Nabarangpur','Nayagarh','Nuapada','Puri','Rayagada','Sambalpur','Sonepur','Sundargarh'];
+
+        // Balasore master dataset loaded from balasore_data.js
+        let balasoreLocations = (typeof BALASORE_MASTER_LOCATIONS !== 'undefined') ? BALASORE_MASTER_LOCATIONS : [];
+
+        // Refresh dynamically from backend if available
+        fetch('/api/locations')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success' && data.data && data.data.length > 0) {
+                    balasoreLocations = data.data;
+                }
+            })
+            .catch(e => {
+                console.log('Preloaded with', balasoreLocations.length, 'Balasore Master Locations');
+            });
+
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.transform = 'translateX(-50%) translateY(0)';
+            setTimeout(function(){ t.style.transform = 'translateX(-50%) translateY(-100px)'; }, 2500);
+        }
+
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('open');
+            document.getElementById('menuOverlay').classList.toggle('open');
+        }
+
+        function toggleNotif() {
+            document.getElementById('notifDrop').classList.toggle('show');
+        }
+
+        function swapLocations() {
+            var p = document.getElementById('pickupInput');
+            var d = document.getElementById('dropInput');
+            var tmp = p.value;
+            p.value = d.value;
+            d.value = tmp;
+            showToast('Locations swapped!');
+        }
+
+        function setLocation(loc) {
+            var drop = document.getElementById('dropInput');
+            drop.value = loc;
+            showToast('📍 ' + loc);
+            // Hide any dropdowns
+            hideAllSuggestions();
+        }
+
+        function hideAllSuggestions() {
+            var pDrop = document.getElementById('pickupSuggestions');
+            var dDrop = document.getElementById('dropSuggestions');
+            if (pDrop) pDrop.classList.remove('show');
+            if (dDrop) dDrop.classList.remove('show');
+        }
+
+        // Triggered when clicking/focusing the input
+        function handleLocationFocus(type) {
+            var input = (type === 'pickup') ? document.getElementById('pickupInput') : document.getElementById('dropInput');
+            var val = input.value.trim().toLowerCase();
+            renderDynamicSuggestions(type, val);
+        }
+
+        // Triggered when typing any starting letter
+        function handleLocationInput(type) {
+            var input = (type === 'pickup') ? document.getElementById('pickupInput') : document.getElementById('dropInput');
+            var val = input.value.trim().toLowerCase();
+            renderDynamicSuggestions(type, val);
+        }
+
+        // Smart Suggestion Engine
+        function renderDynamicSuggestions(type, query) {
+            var dropdown = (type === 'pickup') ? document.getElementById('pickupSuggestions') : document.getElementById('dropSuggestions');
+            var otherDropdown = (type === 'pickup') ? document.getElementById('dropSuggestions') : document.getElementById('pickupSuggestions');
+            if (otherDropdown) otherDropdown.classList.remove('show');
+
+            if (!dropdown) return;
+
+            var results = [];
+            if (!query) {
+                // Show popular Balasore hubs when empty or on initial focus
+                results = balasoreLocations.slice(0, 15);
+            } else {
+                // Filter where starting letter or word matches name, area, block, or type
+                var exactStarts = [];
+                var containsMatch = [];
+
+                balasoreLocations.forEach(function(item) {
+                    var n = item.name.toLowerCase();
+                    var a = item.area.toLowerCase();
+                    var b = (item.block || '').toLowerCase();
+                    var t = (item.type || item.category || '').toLowerCase();
+
+                    // Prioritize starting letter / startsWith match
+                    if (n.startsWith(query) || a.startsWith(query) || b.startsWith(query)) {
+                        exactStarts.push(item);
+                    } else if (n.includes(query) || a.includes(query) || b.includes(query) || t.includes(query)) {
+                        containsMatch.push(item);
+                    }
+                });
+
+                results = exactStarts.concat(containsMatch).slice(0, 25);
+            }
+
+            if (results.length === 0) {
+                dropdown.innerHTML = '<div style="padding: 14px; text-align: center; color: #777; font-size: 13px;">No Balasore location matching "<strong>' + query + '</strong>"</div>';
+                dropdown.classList.add('show');
+                return;
+            }
+
+            var titleText = query ? ('Matches for "' + query + '" (' + results.length + ')') : 'Popular Balasore Locations';
+            var html = '<div class="suggestion-header"><span>' + titleText + '</span><span style="background:#1a5c54; color:white; padding:1px 6px; border-radius:10px; font-size:10px;">Balasore Area</span></div>';
+
+            results.forEach(function(item) {
+                var blockBadge = item.block ? (' · ' + item.block) : '';
+                var typeLabel = item.type || item.category || 'Location';
+                
+                // Highlight matching letters if query exists
+                var displayName = item.name;
+                if (query) {
+                    var regex = new RegExp('(' + query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + ')', 'gi');
+                    displayName = item.name.replace(regex, '<span style="color:#1a5c54; font-weight:800; text-decoration:underline;">$1</span>');
+                }
+
+                html += '<div class="suggestion-item" onclick="selectSuggestion(\'' + type + '\', \'' + item.name.replace(/'/g, "\\'") + '\', \'' + item.area.replace(/'/g, "\\'") + '\', \'' + (item.block || 'Balasore').replace(/'/g, "\\'") + '\')">';
+                html += '  <i class="fas fa-location-dot sugg-icon"></i>';
+                html += '  <div style="flex:1;">';
+                html += '    <div class="sugg-title">' + displayName + '</div>';
+                html += '    <div class="sugg-desc">' + item.area + blockBadge + ' · <span class="sugg-badge">' + typeLabel + '</span></div>';
+                html += '  </div>';
+                html += '</div>';
+            });
+
+            dropdown.innerHTML = html;
+            dropdown.classList.add('show');
+        }
+
+        function selectSuggestion(type, name, area, block) {
+            var input = (type === 'pickup') ? document.getElementById('pickupInput') : document.getElementById('dropInput');
+            var selectedText = name + ', ' + area + ' (' + block + ')';
+            input.value = selectedText;
+            hideAllSuggestions();
+
+            showToast('Selected: ' + name);
+
+            if (type === 'pickup') {
+                // Focus drop input for smooth flow
+                var dropInp = document.getElementById('dropInput');
+                setTimeout(function() {
+                    dropInp.focus();
+                    handleLocationFocus('drop');
+                }, 200);
+            } else {
+                checkAndNavigate();
+            }
+        }
+
+        function checkAndNavigate() {
+            var p = document.getElementById('pickupInput').value.trim();
+            var d = document.getElementById('dropInput').value.trim();
+            if (p && d) {
+                setTimeout(function() {
+                    window.location.href = 'booking.html?pickup=' + encodeURIComponent(p) + '&drop=' + encodeURIComponent(d);
+                }, 600);
+            }
+        }
+
+        var selectedRide = 'Bike';
+        var selectedPrice = 5;
+        function selectRide(el, name, price) {
+            document.querySelectorAll('.ride-card').forEach(function(c) { c.classList.remove('selected'); });
+            el.classList.add('selected');
+            selectedRide = name;
+            selectedPrice = price;
+            showToast(name + ' selected — ₹' + price + '/km');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.location-field-wrapper')) {
+                hideAllSuggestions();
+            }
+            if (!e.target.closest('.fa-bell') && !e.target.closest('.notif-dropdown')) {
+                var nd = document.getElementById('notifDrop');
+                if (nd) nd.classList.remove('show');
+            }
+        });
+            if (!e.target.closest('.fa-bell') && !e.target.closest('.notif-dropdown')) {
+                document.getElementById('notifDrop').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

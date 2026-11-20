@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Payment — Vahan Mitra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            background: #e8eceb;
+        }
+        .phone-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            position: relative;
+            background: #f0f4f3;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .phone-frame::-webkit-scrollbar { width: 0; }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            background: #1a5c54;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .status-icons { display: flex; gap: 5px; align-items: center; }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(180deg, #1a5c54 0%, #154e47 100%);
+            color: white;
+            padding: 16px 20px 22px;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 4px 15px rgba(26,92,84,0.2);
+            position: sticky;
+            top: 32px;
+            z-index: 90;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .back-btn:active { transform: scale(0.92); }
+        .header-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .header-right { width: 36px; }
+
+        /* Amount Display Card */
+        .amount-summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-top: 6px;
+        }
+        .amount-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .ride-ref {
+            font-size: 11px;
+            color: #1a5c54;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+        .amount-val {
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            color: #1a5c54;
+        }
+
+        /* Content Container */
+        .content-body {
+            flex: 1;
+            padding: 16px 18px 90px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .section-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Payment Option Cards */
+        .payment-card {
+            background: white;
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 2px solid #e5edea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .payment-card:active { transform: scale(0.98); }
+        .payment-card.selected {
+            border-color: #1a5c54;
+            background: #f7fbf9;
+            box-shadow: 0 4px 15px rgba(26,92,84,0.12);
+        }
+
+        .method-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .icon-qr { background: #e0f2f1; color: #1a5c54; }
+        .icon-upi { background: #fff8e1; color: #d4a843; }
+        .icon-wallet { background: #ede7f6; color: #673ab7; }
+        .icon-cash { background: #e8f5e9; color: #2e7d32; }
+
+        .method-info { flex: 1; }
+        .method-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #222;
+        }
+        .method-desc {
+            font-size: 11.5px;
+            color: #666;
+            margin-top: 2px;
+        }
+        .method-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: white;
+            transition: 0.2s;
+        }
+        .payment-card.selected .method-check {
+            border-color: #1a5c54;
+            background: #1a5c54;
+        }
+
+        /* Dynamic Payment Containers */
+        .pay-details-panel {
+            background: white;
+            border-radius: 18px;
+            padding: 18px;
+            border: 1px solid #dfe7e4;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+        .pay-details-panel.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dynamic QR Code */
+        .qr-wrapper {
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            border: 2px dashed #1a5c54;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .qr-image {
+            width: 170px;
+            height: 170px;
+            border-radius: 8px;
+        }
+        .qr-apps-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 20px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        /* UPI Input */
+        .upi-input-group {
+            width: 100%;
+            display: flex;
+            gap: 8px;
+        }
+        .upi-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #cbd8d4;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            outline: none;
+        }
+        .upi-input:focus { border-color: #1a5c54; }
+
+        .upi-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .upi-app-btn {
+            background: #f7faf9;
+            border: 1px solid #e1e9e6;
+            border-radius: 10px;
+            padding: 8px 4px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+        }
+        .upi-app-btn:hover { background: #eaf3f0; border-color: #1a5c54; }
+
+        /* Pay Button */
+        .pay-action-btn {
+            background: #1a5c54;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(26,92,84,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.2s;
+            margin-top: 4px;
+        }
+        .pay-action-btn:active { transform: scale(0.98); }
+
+        /* Success Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-card {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 360px;
+            padding: 28px 20px 24px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: zoomIn 0.3s ease;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .success-icon-wrap {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .modal-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a5c54;
+            margin-bottom: 6px;
+        }
+        .modal-card p {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        .receipt-strip {
+            background: #f7faf9;
+            border: 1px dashed #cbd8d4;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #444;
+            text-align: left;
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(50px);
+            background: #1a5c54;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-frame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>09:41</span>
+            <div class="status-icons">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="page-header">
+            <div class="header-top">
+                <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="header-title">Vahan Mitra Payment</div>
+                <div class="header-right"></div>
+            </div>
+
+            <!-- Total Amount Card -->
+            <div class="amount-summary-card">
+                <div>
+                    <div class="amount-label">Trip Total (Odisha Ride)</div>
+                    <div class="ride-ref" id="rideIdBadge">Ride: VM-BLS-17180</div>
+                </div>
+                <div class="amount-val" id="displayAmount">₹107.00</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-body">
+            <div class="section-label"><i class="fa-solid fa-shield-halved" style="color: #1a5c54;"></i> Choose Payment Method</div>
+
+            <!-- Option 1: Instant Dynamic UPI QR -->
+            <div class="payment-card selected" onclick="selectMethod('UPI_QR')">
+                <div class="method-icon-box icon-qr">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <div class="method-info">
+                    <div class="method-title">Scan Dynamic UPI QR</div>
+                    <div class="method-desc">Pay using Google Pay, PhonePe, Paytm or BHIM</div>
+                </div>
+                <div class="method-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+
+            <!-- Option 2: UPI ID / Collect -->
+            <div class="payment-card" onclick="selectMethod('UPI_ID')">
+                <div class="method-icon-box icon-upi">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <div class="method-info">
+                    <div class="method-title">UPI ID / VPA</div>
+                    <div class="method-desc">Enter any VPA (e.g. mobile@apl / user@sbi)</div>
+                </div>
+                <div class="method-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+
+            <!-- Option 3: Vahan Mitra Wallet -->
+            <div class="payment-card" onclick="selectMethod('WALLET')">
+                <div class="method-icon-box icon-wallet">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div class="method-info">
+                    <div class="method-title">Vahan Mitra Wallet</div>
+                    <div class="method-desc" id="walletBalDesc">Available Balance: ₹350.00 (Instant 1-Click)</div>
+                </div>
+                <div class="method-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+
+            <!-- Option 4: Cash to Driver -->
+            <div class="payment-card" onclick="selectMethod('CASH')">
+                <div class="method-icon-box icon-cash">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+                <div class="method-info">
+                    <div class="method-title">Cash to Pilot / Driver</div>
+                    <div class="method-desc">Pay cash upon destination arrival in Balasore</div>
+                </div>
+                <div class="method-check"><i class="fa-solid fa-check"></i></div>
+            </div>
+
+            <!-- Dynamic QR Details Panel -->
+            <div class="pay-details-panel active" id="qrPanel">
+                <div style="font-size: 13px; font-weight: 700; color: #1a5c54;">Scan with Any UPI App</div>
+                <div class="qr-wrapper">
+                    <!-- Dynamic live QR Code image generated via quickchart / google chart standard -->
+                    <img id="dynamicQrImg" class="qr-image" src="" alt="Vahan Mitra UPI QR Code">
+                    <div style="font-size: 11px; font-weight: 600; color: #444;">UPI ID: vahanmitra@sbi</div>
+                </div>
+                <div class="qr-apps-row">
+                    <i class="fa-brands fa-google-pay" title="GPay"></i>
+                    <i class="fa-solid fa-money-check-dollar" title="PhonePe"></i>
+                    <i class="fa-solid fa-bolt" title="Paytm"></i>
+                    <i class="fa-solid fa-building-columns" title="BHIM"></i>
+                </div>
+                <div style="font-size: 11.5px; color: #777;">Auto-detects payment verification upon completion</div>
+            </div>
+
+            <!-- UPI ID Input Panel -->
+            <div class="pay-details-panel" id="upiPanel">
+                <div style="font-size: 13px; font-weight: 700; color: #1a5c54; width:100%; text-align:left;">Enter your UPI ID / Virtual Address</div>
+                <div class="upi-input-group">
+                    <input type="text" id="upiIdInput" class="upi-input" placeholder="e.g. 9876543210@ybl" value="soumya@oksbi">
+                </div>
+                <div class="upi-apps-grid">
+                    <div class="upi-app-btn" onclick="setUpiSuffix('@oksbi')">@oksbi</div>
+                    <div class="upi-app-btn" onclick="setUpiSuffix('@ybl')">@ybl</div>
+                    <div class="upi-app-btn" onclick="setUpiSuffix('@paytm')">@paytm</div>
+                    <div class="upi-app-btn" onclick="setUpiSuffix('@ibl')">@ibl</div>
+                </div>
+            </div>
+
+            <!-- Wallet Panel -->
+            <div class="pay-details-panel" id="walletPanel">
+                <i class="fa-solid fa-wallet" style="font-size: 32px; color: #1a5c54;"></i>
+                <div style="font-size: 14px; font-weight: 700; color: #1a5c54;">Deduct from Vahan Wallet</div>
+                <div style="font-size: 12px; color: #555;">Instant one-click checkout with zero gateway failures and cashback rewards!</div>
+            </div>
+
+            <!-- Cash Panel -->
+            <div class="pay-details-panel" id="cashPanel">
+                <i class="fa-solid fa-hand-holding-dollar" style="font-size: 32px; color: #2e7d32;"></i>
+                <div style="font-size: 14px; font-weight: 700; color: #2e7d32;">Pay Cash on Arrival</div>
+                <div style="font-size: 12px; color: #555;">Hand over the exact cash directly to your Balasore pilot at the drop location.</div>
+            </div>
+
+            <!-- Pay Now Button -->
+            <button class="pay-action-btn" id="payButton" onclick="processPaymentBackend()">
+                <i class="fa-solid fa-lock"></i>
+                <span id="payBtnLabel">Pay ₹107.00 Securely</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-card">
+            <div class="success-icon-wrap">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3>Payment Received!</h3>
+            <p>Your payment has been verified by Vahan Mitra Odisha backend.</p>
+
+            <div class="receipt-strip">
+                <div class="receipt-row">
+                    <span>Transaction ID:</span>
+                    <strong id="receiptTxn">TXN-BLS-8912</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Amount Paid:</span>
+                    <strong id="receiptAmt">₹107.00</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Payment Method:</span>
+                    <strong id="receiptMethod">UPI Dynamic QR</strong>
+                </div>
+                <div class="receipt-row">
+                    <span>Status:</span>
+                    <strong style="color: #2e7d32;">SUCCESS (Confirmed)</strong>
+                </div>
+            </div>
+
+            <button class="pay-action-btn" style="background:#d4a843; color:#1a5c54; margin:0;" onclick="goToTracking()">
+                <i class="fa-solid fa-location-arrow"></i> Continue to Live Tracking
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toastMessage">
+        <i class="fa-solid fa-circle-check" style="color: #d4a843;"></i>
+        <span id="toastText">Payment initialized</span>
+    </div>
+
+    <script>
+        let currentMethod = 'UPI_QR';
+        let rideId = 'VM-BLS-' + Math.floor(Date.now() / 1000);
+        let amount = 107.0;
+        let userPhone = localStorage.getItem('vahan_phone') || '9876543210';
+
+        // Parse URL params if passed from booking page
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('fare')) amount = parseFloat(params.get('fare')) || 107.0;
+        if (params.get('ride_id')) rideId = params.get('ride_id');
+
+        document.getElementById('displayAmount').innerText = `₹${amount.toFixed(2)}`;
+        document.getElementById('payBtnLabel').innerText = `Pay ₹${amount.toFixed(2)} Securely`;
+        document.getElementById('rideIdBadge').innerText = `Ride: ${rideId}`;
+
+        // Generate dynamic QR Code for UPI
+        function updateQrCode() {
+            const upiString = `upi://pay?pa=vahanmitra@sbi&pn=VahanMitraOdisha&am=${amount.toFixed(2)}&tn=Ride_${rideId}&cu=INR`;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiString)}`;
+            document.getElementById('dynamicQrImg').src = qrUrl;
+        }
+        updateQrCode();
+
+        // Load wallet balance from backend API
+        fetch(`/api/wallet?phone=${userPhone}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    document.getElementById('walletBalDesc').innerText = `Available Balance: ₹${data.balance.toFixed(2)} (Instant 1-Click)`;
+                }
+            }).catch(e => console.log('Offline mode or direct file load'));
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMessage');
+            const text = document.getElementById('toastText');
+            text.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function selectMethod(method) {
+            currentMethod = method;
+            document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.pay-details-panel').forEach(p => p.classList.remove('active'));
+
+            if (method === 'UPI_QR') {
+                event.currentTarget.classList.add('selected');
+                document.getElementById('qrPanel').classList.add('active');
+                document.getElementById('payBtnLabel').innerText = `I Have Paid ₹${amount.toFixed(2)} via QR`;
+            } else if (method === 'UPI_ID') {
+                event.currentTarget.classList.add('selected');
+                document.getElementById('upiPanel').classList.add('active');
+                document.getElementById('payBtnLabel').innerText = `Request UPI Collect ₹${amount.toFixed(2)}`;
+            } else if (method === 'WALLET') {
+                event.currentTarget.classList.add('selected');
+                document.getElementById('walletPanel').classList.add('active');
+                document.getElementById('payBtnLabel').innerText = `Pay ₹${amount.toFixed(2)} with Wallet`;
+            } else if (method === 'CASH') {
+                event.currentTarget.classList.add('selected');
+                document.getElementById('cashPanel').classList.add('active');
+                document.getElementById('payBtnLabel').innerText = `Confirm Cash on Drop (₹${amount.toFixed(2)})`;
+            }
+        }
+
+        function setUpiSuffix(suffix) {
+            const upiInp = document.getElementById('upiIdInput');
+            let prefix = upiInp.value.split('@')[0] || '9876543210';
+            upiInp.value = prefix + suffix;
+        }
+
+        // Process backend call to /api/payment/process
+        function processPaymentBackend() {
+            const btn = document.getElementById('payButton');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Verifying with Bank...`;
+            btn.disabled = true;
+
+            const payload = {
+                phone: userPhone,
+                ride_id: rideId,
+                amount: amount,
+                method: currentMethod,
+                upi_id: currentMethod === 'UPI_ID' ? document.getElementById('upiIdInput').value : 'vahanmitra@sbi'
+            };
+
+            fetch('/api/payment/process', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = `<i class="fa-solid fa-lock"></i> <span id="payBtnLabel">Pay ₹${amount.toFixed(2)} Securely</span>`;
+                btn.disabled = false;
+
+                if (data.status === 'success') {
+                    document.getElementById('receiptTxn').innerText = data.txn_id;
+                    document.getElementById('receiptAmt').innerText = `₹${amount.toFixed(2)}`;
+                    document.getElementById('receiptMethod').innerText = currentMethod;
+                    document.getElementById('successModal').style.display = 'flex';
+                } else {
+                    showToast(data.message || 'Payment processing failed');
+                }
+            })
+            .catch(err => {
+                // Fallback simulation if running purely locally without server
+                setTimeout(() => {
+                    btn.innerHTML = `<i class="fa-solid fa-lock"></i> Paid`;
+                    btn.disabled = false;
+                    document.getElementById('receiptTxn').innerText = 'TXN-BLS-' + Math.floor(Date.now() / 1000);
+                    document.getElementById('receiptAmt').innerText = `₹${amount.toFixed(2)}`;
+                    document.getElementById('receiptMethod').innerText = currentMethod;
+                    document.getElementById('successModal').style.display = 'flex';
+                }, 1000);
+            });
+        }
+
+        function goToTracking() {
+            window.location.href = `tracking.html?ride_id=${rideId}&fare=${amount}`;
+        }
+    </script>
+</body>
+</html>

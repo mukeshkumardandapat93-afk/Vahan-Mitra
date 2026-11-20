@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Book Ride — Vahan Mitra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{height:100%}
+        body{font-family:'Inter',sans-serif;display:flex;justify-content:center;background:#e8eceb}
+        .phone-frame{width:100%;max-width:420px;min-height:100vh;background:#f0f4f3;overflow-y:auto;overflow-x:hidden;position:relative}
+        .phone-frame::-webkit-scrollbar{width:0}
+        .status-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 20px;background:#1a5c54;color:white;font-size:12px;font-weight:500;position:sticky;top:0;z-index:100}
+        .status-icons{display:flex;gap:5px;align-items:center}
+        .status-icons i{font-size:11px}
+        .header{display:flex;align-items:center;padding:14px 18px;background:#1a5c54;color:white;gap:12px}
+        .header .back{font-size:20px;cursor:pointer;padding:4px}
+        .header h1{font-family:'Poppins',sans-serif;font-size:18px;font-weight:600;flex:1}
+
+        .route-card{background:white;margin:15px;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+        .route-header{font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:#1a5c54;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+        .route-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0}
+        .route-dot{width:12px;height:12px;border-radius:50%;margin-top:3px;flex-shrink:0}
+        .route-dot.green{background:#27ae60;box-shadow:0 0 0 3px rgba(39,174,96,0.2)}
+        .route-dot.red{background:#e74c3c;box-shadow:0 0 0 3px rgba(231,76,60,0.2)}
+        .route-info{flex:1}
+        .route-label{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+        .route-place{font-size:14px;color:#333;font-weight:500;margin-top:3px}
+        .route-line{width:2px;height:25px;background:#ddd;margin-left:5px}
+        .route-distance{text-align:center;padding:8px;background:#f0f9f7;border-radius:10px;margin-top:8px;font-size:13px;color:#2d8a7e;font-weight:500}
+
+        .vehicle-section{background:white;margin:0 15px;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+        .vehicle-label{font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:#333;margin-bottom:12px}
+        .vehicle-options{display:flex;gap:10px;overflow-x:auto;padding-bottom:5px}
+        .vehicle-options::-webkit-scrollbar{display:none}
+        .v-card{min-width:90px;padding:14px 10px;text-align:center;background:#f8f9fa;border-radius:14px;cursor:pointer;border:2px solid transparent;transition:all .3s;flex-shrink:0}
+        .v-card.selected{border-color:#1a5c54;background:#f0f9f7}
+        .v-card:active{transform:scale(.95)}
+        .v-card .v-icon{font-size:28px;margin-bottom:6px}
+        .v-card .v-name{font-size:12px;font-weight:600;color:#333}
+        .v-card .v-rate{font-size:11px;color:#1a5c54;font-weight:600;margin-top:2px}
+
+        .fare-section{background:white;margin:15px;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+        .fare-title{font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:#333;margin-bottom:12px}
+        .fare-row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;color:#555;border-bottom:1px solid #f5f5f5}
+        .fare-row:last-child{border:none}
+        .fare-row.total{font-weight:700;color:#1a5c54;font-size:16px;padding-top:12px;border-top:2px solid #f0f0f0;margin-top:5px}
+
+        .driver-card{background:white;margin:0 15px;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06);display:none}
+        .driver-card.show{display:block;animation:slideUp .5s ease}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .driver-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+        .driver-avatar{width:55px;height:55px;border-radius:50%;background:linear-gradient(135deg,#1a5c54,#2d8a7e);display:flex;align-items:center;justify-content:center;font-size:24px;color:white}
+        .driver-info h3{font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:#333}
+        .driver-info .rating{font-size:13px;color:#d4a843;margin-top:2px}
+        .driver-info .vehicle-no{font-size:12px;color:#888;margin-top:2px}
+        .driver-actions{display:flex;gap:10px}
+        .driver-action-btn{flex:1;padding:10px;border-radius:12px;border:1.5px solid #e0e0e0;background:white;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+        .driver-action-btn:active{background:#f0f4f3}
+        .driver-action-btn i{color:#1a5c54}
+
+        .searching{background:white;margin:15px;border-radius:20px;padding:30px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.06);display:none}
+        .searching.show{display:block}
+        .search-anim{display:flex;justify-content:center;gap:8px;margin-bottom:15px}
+        .search-dot{width:12px;height:12px;border-radius:50%;background:#1a5c54;animation:searchPulse 1.5s ease-in-out infinite}
+        .search-dot:nth-child(2){animation-delay:.2s}
+        .search-dot:nth-child(3){animation-delay:.4s}
+        @keyframes searchPulse{0%,100%{transform:scale(.6);opacity:.4}50%{transform:scale(1);opacity:1}}
+        .searching h3{font-family:'Poppins',sans-serif;font-size:15px;color:#333;margin-bottom:5px}
+        .searching p{font-size:13px;color:#999}
+
+        .payment-section{background:white;margin:15px;border-radius:20px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06)}
+        .pay-title{font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;color:#333;margin-bottom:12px}
+        .pay-options{display:flex;gap:10px}
+        .pay-opt{flex:1;padding:12px;text-align:center;border-radius:12px;border:2px solid #e8e8e8;cursor:pointer;transition:all .3s;font-size:13px;font-weight:500;color:#555}
+        .pay-opt.selected{border-color:#1a5c54;background:#f0f9f7;color:#1a5c54}
+        .pay-opt:active{transform:scale(.95)}
+        .pay-opt i{display:block;font-size:20px;margin-bottom:5px}
+
+        .coupon-row{display:flex;gap:10px;margin:0 15px 15px;align-items:center}
+        .coupon-input{flex:1;padding:13px 16px;border:2px solid #e8e8e8;border-radius:14px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .3s}
+        .coupon-input:focus{border-color:#2d8a7e}
+        .coupon-apply{padding:13px 20px;background:#d4a843;color:#1a5c54;border:none;border-radius:14px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;transition:all .3s}
+        .coupon-apply:active{transform:scale(.95)}
+
+        .action-buttons{padding:0 15px 30px;display:flex;gap:10px}
+        .btn-book{flex:2;padding:16px;background:linear-gradient(135deg,#1a5c54,#2d8a7e);color:white;border:none;border-radius:16px;font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(26,92,84,0.3);transition:all .3s}
+        .btn-book:active{transform:scale(.97)}
+        .btn-schedule{flex:1;padding:16px;background:white;color:#1a5c54;border:2px solid #1a5c54;border-radius:16px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .3s}
+        .btn-schedule:active{transform:scale(.97);background:#f0f9f7}
+
+        .toast{position:fixed;top:30px;left:50%;transform:translateX(-50%) translateY(-100px);background:#1a5c54;color:white;padding:12px 24px;border-radius:12px;font-size:13px;font-weight:500;z-index:1000;transition:transform .4s ease;box-shadow:0 8px 25px rgba(0,0,0,.2)}
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span>9:42</span>
+            <div class="status-icons"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-full"></i></div>
+        </div>
+        <div class="header">
+            <div class="back" onclick="window.location.href='home.html'"><i class="fas fa-arrow-left"></i></div>
+            <h1>Book Your Ride</h1>
+        </div>
+
+        <!-- Route Card -->
+        <div class="route-card">
+            <div class="route-header"><i class="fas fa-route"></i> Route Summary</div>
+            <div class="route-row">
+                <div class="route-dot green"></div>
+                <div class="route-info">
+                    <div class="route-label">Pickup</div>
+                    <div class="route-place" id="pickupDisplay">Bhubaneswar Station, Khordha</div>
+                </div>
+            </div>
+            <div class="route-line" style="margin-left:5px"></div>
+            <div class="route-row">
+                <div class="route-dot red"></div>
+                <div class="route-info">
+                    <div class="route-label">Drop-off</div>
+                    <div class="route-place" id="dropDisplay">Puri Jagannath Temple, Puri</div>
+                </div>
+            </div>
+            <div class="route-distance"><i class="fas fa-road"></i>&nbsp; Approx. 60 km · 1 hr 15 min</div>
+        </div>
+
+        <!-- Vehicle Selection -->
+        <div class="vehicle-section">
+            <div class="vehicle-label">Select Vehicle</div>
+            <div class="vehicle-options">
+                <div class="v-card" onclick="selectVehicle(this,'Bike',5)"><div class="v-icon">🏍️</div><div class="v-name">Bike</div><div class="v-rate">₹5/km</div></div>
+                <div class="v-card" onclick="selectVehicle(this,'Auto',8)"><div class="v-icon">🛺</div><div class="v-name">Auto</div><div class="v-rate">₹8/km</div></div>
+                <div class="v-card selected" onclick="selectVehicle(this,'Mini Cab',12)"><div class="v-icon">🚗</div><div class="v-name">Mini Cab</div><div class="v-rate">₹12/km</div></div>
+                <div class="v-card" onclick="selectVehicle(this,'Sedan',15)"><div class="v-icon">🚙</div><div class="v-name">Sedan</div><div class="v-rate">₹15/km</div></div>
+                <div class="v-card" onclick="selectVehicle(this,'Parcel',10)"><div class="v-icon">📦</div><div class="v-name">Parcel</div><div class="v-rate">₹10/km</div></div>
+            </div>
+        </div>
+
+        <!-- Fare Breakdown -->
+        <div class="fare-section">
+            <div class="fare-title"><i class="fas fa-receipt"></i>&nbsp; Fare Estimate</div>
+            <div class="fare-row"><span>Base Fare</span><span>₹30.00</span></div>
+            <div class="fare-row"><span>Distance (60 km × ₹<span id="rateDisplay">12</span>)</span><span id="distFare">₹720.00</span></div>
+            <div class="fare-row"><span>Platform Fee</span><span>₹10.00</span></div>
+            <div class="fare-row"><span>GST (5%)</span><span id="taxAmt">₹38.00</span></div>
+            <div class="fare-row"><span style="color:#27ae60">Coupon Discount</span><span style="color:#27ae60" id="discountAmt">-₹0.00</span></div>
+            <div class="fare-row total"><span>Total Fare</span><span id="totalFare">₹798.00</span></div>
+        </div>
+
+        <!-- Searching Animation -->
+        <div class="searching" id="searchingBox">
+            <div class="search-anim">
+                <div class="search-dot"></div><div class="search-dot"></div><div class="search-dot"></div>
+            </div>
+            <h3>Searching for driver...</h3>
+            <p>Finding the best driver near you</p>
+        </div>
+
+        <!-- Driver Card -->
+        <div class="driver-card" id="driverCard">
+            <div class="driver-top">
+                <div class="driver-avatar"><i class="fas fa-user"></i></div>
+                <div class="driver-info">
+                    <h3>Rajesh Kumar</h3>
+                    <div class="rating">⭐ 4.8 · 2,345 rides</div>
+                    <div class="vehicle-no">OD 02 AB 1234 · White Swift</div>
+                </div>
+            </div>
+            <div class="driver-actions">
+                <button class="driver-action-btn" onclick="showToast('Calling driver...')"><i class="fas fa-phone"></i> Call</button>
+                <button class="driver-action-btn" onclick="showToast('Opening chat...')"><i class="fas fa-comment"></i> Message</button>
+            </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="payment-section">
+            <div class="pay-title"><i class="fas fa-credit-card"></i>&nbsp; Payment Method</div>
+            <div class="pay-options">
+                <div class="pay-opt selected" onclick="selectPay(this)"><i class="fas fa-money-bill-wave"></i>Cash</div>
+                <div class="pay-opt" onclick="selectPay(this)"><i class="fab fa-google-pay"></i>UPI</div>
+                <div class="pay-opt" onclick="selectPay(this)"><i class="fas fa-wallet"></i>Wallet</div>
+            </div>
+        </div>
+
+        <!-- Coupon -->
+        <div class="coupon-row">
+            <input type="text" class="coupon-input" id="couponInput" placeholder="Enter coupon code">
+            <button class="coupon-apply" onclick="applyCoupon()">Apply</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn-book" onclick="bookRide()"><i class="fas fa-check-circle"></i>&nbsp; Book Now</button>
+            <button class="btn-schedule" onclick="showToast('Schedule feature coming soon!')"><i class="fas fa-calendar-alt"></i><br>Schedule</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Parse URL params
+        var params = new URLSearchParams(window.location.search);
+        if(params.get('pickup')) document.getElementById('pickupDisplay').textContent = params.get('pickup');
+        if(params.get('drop')) document.getElementById('dropDisplay').textContent = params.get('drop');
+
+        var currentRate = 12;
+        var distance = 60;
+        var discount = 0;
+
+        function showToast(msg){
+            var t=document.getElementById('toast');
+            t.textContent=msg;
+            t.style.transform='translateX(-50%) translateY(0)';
+            setTimeout(function(){t.style.transform='translateX(-50%) translateY(-100px)'},2500);
+        }
+
+        function selectVehicle(el,name,rate){
+            document.querySelectorAll('.v-card').forEach(function(c){c.classList.remove('selected')});
+            el.classList.add('selected');
+            currentRate=rate;
+            updateFare();
+            showToast(name+' selected');
+        }
+
+        function selectPay(el){
+            document.querySelectorAll('.pay-opt').forEach(function(c){c.classList.remove('selected')});
+            el.classList.add('selected');
+        }
+
+        function updateFare(){
+            var dist=distance*currentRate;
+            var platform=10;
+            var base=30;
+            var subtotal=dist+platform+base;
+            var tax=Math.round(subtotal*0.05);
+            var total=subtotal+tax-discount;
+            document.getElementById('rateDisplay').textContent=currentRate;
+            document.getElementById('distFare').textContent='₹'+dist.toFixed(2);
+            document.getElementById('taxAmt').textContent='₹'+tax.toFixed(2);
+            document.getElementById('discountAmt').textContent='-₹'+discount.toFixed(2);
+            document.getElementById('totalFare').textContent='₹'+total.toFixed(2);
+        }
+
+        function applyCoupon(){
+            var code=document.getElementById('couponInput').value.trim().toUpperCase();
+            if(code==='VAHANFIRST'){discount=100;showToast('🎉 VAHANFIRST applied! ₹100 off')}
+            else if(code==='ODISHA30'){discount=30;showToast('🎉 ODISHA30 applied! ₹30 off')}
+            else if(code==='WEEKEND20'){
+                var total=distance*currentRate+40;
+                discount=Math.round(total*0.2);
+                showToast('🎉 WEEKEND20 applied! 20% off')
+            }
+            else{discount=0;showToast('Invalid coupon code');return}
+            updateFare();
+        }
+
+        function bookRide(){
+            var btn=document.querySelector('.btn-book');
+            btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>&nbsp; Matching Balasore Pilot...';
+            btn.style.opacity='0.7';
+            document.getElementById('searchingBox').classList.add('show');
+            document.getElementById('searchingBox').scrollIntoView({behavior:'smooth'});
+
+            var pickup = document.getElementById('pickupDisplay').textContent;
+            var drop = document.getElementById('dropDisplay').textContent;
+            var userPhone = localStorage.getItem('vahan_phone') || '9876543210';
+            var total = parseFloat(document.getElementById('totalFare').textContent.replace('₹','')) || 107;
+
+            // Call real backend API
+            fetch('/api/ride/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_phone: userPhone,
+                    pickup_name: pickup,
+                    pickup_area: 'Balasore',
+                    drop_name: drop,
+                    drop_area: 'Balasore',
+                    vehicle_type: 'bike',
+                    distance_km: distance,
+                    total_fare: total,
+                    payment_method: 'UPI_QR',
+                    discount: discount
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('searchingBox').classList.remove('show');
+                if (data.status === 'success') {
+                    btn.innerHTML='<i class="fas fa-check-circle"></i>&nbsp; Pilot Assigned!';
+                    btn.style.background='#27ae60';
+                    showToast('✅ Pilot Assigned: ' + data.driver.name);
+                    setTimeout(function(){
+                        // Redirect to Payment page with UPI QR / Wallet option
+                        window.location.href = `payment.html?ride_id=${data.ride_id}&fare=${total}`;
+                    }, 1500);
+                } else {
+                    showToast(data.message || 'Error creating ride');
+                }
+            })
+            .catch(err => {
+                setTimeout(function(){
+                    document.getElementById('searchingBox').classList.remove('show');
+                    btn.innerHTML='<i class="fas fa-check-circle"></i>&nbsp; Confirmed!';
+                    btn.style.background='#27ae60';
+                    showToast('✅ Pilot found! Redirecting to Payment');
+                    var mockId = 'VM-BLS-' + Math.floor(Date.now()/1000);
+                    setTimeout(function(){
+                        window.location.href = `payment.html?ride_id=${mockId}&fare=${total}`;
+                    }, 1200);
+                }, 2000);
+            });
+        }
+
+        updateFare();
+    </script>
+</body>
+</html>

@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Profile — Vahan Mitra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            background: #e8eceb;
+        }
+        .phone-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            position: relative;
+            background: #f0f4f3;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .phone-frame::-webkit-scrollbar { width: 0; }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            background: #1a5c54;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .status-icons { display: flex; gap: 5px; align-items: center; }
+        .status-icons i { font-size: 11px; }
+
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(180deg, #1a5c54 0%, #154e47 100%);
+            color: white;
+            padding: 16px 20px 24px;
+            position: relative;
+            border-radius: 0 0 28px 28px;
+            box-shadow: 0 4px 15px rgba(26,92,84,0.25);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .back-btn, .edit-mode-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .back-btn:active, .edit-mode-btn:active { transform: scale(0.92); }
+        .header-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Avatar Section */
+        .avatar-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        .avatar-container {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            border: 3.5px solid #d4a843;
+            background: #fdfdfd;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .camera-badge {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            background: #d4a843;
+            color: #1a5c54;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 2px solid white;
+        }
+        .user-name-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .user-phone-title {
+            font-size: 13px;
+            color: #e0f2f1;
+            font-weight: 500;
+        }
+        .rating-badge {
+            background: rgba(212, 168, 67, 0.2);
+            border: 1px solid #d4a843;
+            color: #d4a843;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 2px;
+        }
+
+        /* Stats Strip */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            background: white;
+            margin: -16px 18px 0;
+            padding: 14px 10px;
+            border-radius: 16px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 10;
+        }
+        .stat-item {
+            text-align: center;
+            border-right: 1px solid #edf2f0;
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-val {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a5c54;
+        }
+        .stat-lbl {
+            font-size: 11px;
+            color: #777;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        /* Content List */
+        .content-body {
+            flex: 1;
+            padding: 18px 18px 90px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        /* Section Block */
+        .settings-card {
+            background: white;
+            border-radius: 18px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid #e7edea;
+        }
+        .card-heading {
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #888;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Inputs */
+        .field-group {
+            margin-bottom: 12px;
+        }
+        .field-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .input-box {
+            width: 100%;
+            background: #f7faf9;
+            border: 1px solid #dfe7e4;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 13.5px;
+            color: #222;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.2s;
+        }
+        .input-box:focus {
+            border-color: #1a5c54;
+            background: white;
+        }
+        .gender-options {
+            display: flex;
+            gap: 10px;
+        }
+        .gender-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #dfe7e4;
+            background: #f7faf9;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .gender-btn.active {
+            background: #1a5c54;
+            color: white;
+            border-color: #1a5c54;
+        }
+
+        /* Saved Places */
+        .place-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f4f3;
+            cursor: pointer;
+        }
+        .place-item:last-child { border-bottom: none; }
+        .place-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #e0f2f1;
+            color: #1a5c54;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+        .place-details { flex: 1; }
+        .place-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #222;
+        }
+        .place-address {
+            font-size: 11px;
+            color: #777;
+            margin-top: 1px;
+        }
+        .place-action {
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* Action Menu List */
+        .menu-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 0;
+            border-bottom: 1px solid #f2f5f4;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+        .menu-row:last-child { border-bottom: none; }
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #333;
+        }
+        .menu-left i {
+            width: 20px;
+            color: #1a5c54;
+            font-size: 16px;
+            text-align: center;
+        }
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* Language Selector Pill */
+        .lang-pills {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .lang-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #dfe7e4;
+            background: #f7faf9;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+        }
+        .lang-pill.active {
+            background: #d4a843;
+            color: #1a5c54;
+            border-color: #d4a843;
+            font-weight: 700;
+        }
+
+        /* Save Button */
+        .save-btn {
+            background: #1a5c54;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 13px;
+            font-size: 14.5px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(26,92,84,0.25);
+            transition: 0.2s;
+            margin-top: 5px;
+        }
+        .save-btn:active { transform: scale(0.98); }
+
+        /* Logout button */
+        .logout-btn {
+            background: #fff0f0;
+            color: #d32f2f;
+            border: 1px solid #ffd8d8;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 13.5px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .logout-btn:active { background: #ffe2e2; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(50px);
+            background: #1a5c54;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 420px;
+            height: 65px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e0e6e4;
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+            z-index: 99;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            text-decoration: none;
+            color: #888;
+            font-size: 11px;
+            font-weight: 500;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .nav-item i { font-size: 18px; }
+        .nav-item.active {
+            color: #1a5c54;
+            font-weight: 700;
+        }
+        .nav-item.active i {
+            color: #1a5c54;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-frame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>09:41</span>
+            <div class="status-icons">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- Header Profile -->
+        <div class="profile-header">
+            <div class="header-top">
+                <button class="back-btn" onclick="window.location.href='home.html'"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="header-title">My Profile</div>
+                <button class="edit-mode-btn" onclick="toggleEdit()"><i class="fa-solid fa-pen"></i></button>
+            </div>
+
+            <!-- Avatar -->
+            <div class="avatar-wrap">
+                <div class="avatar-container" onclick="uploadPhotoTrigger()">
+                    <img id="profileImage" src="profile2.jpeg" alt="User Profile">
+                    <div class="camera-badge"><i class="fa-solid fa-camera"></i></div>
+                </div>
+                <div class="user-name-title" id="displayName">Mukesh Ku. Dandpat</div>
+                <div class="user-phone-title">+91 81448 xxxxx</div>
+                <div class="rating-badge">
+                    <i class="fa-solid fa-star"></i> 4.9 Rating (42 Rides)
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-val">42</div>
+                <div class="stat-lbl">Total Rides</div>
+            </div>
+            <div class="stat-item" onclick="window.location.href='wallet.html'" style="cursor: pointer;">
+                <div class="stat-val">₹320</div>
+                <div class="stat-lbl">Wallet Cash</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-val">30/30</div>
+                <div class="stat-lbl">Odisha Dist.</div>
+            </div>
+        </div>
+
+        <!-- Body Details Form -->
+        <div class="content-body">
+            <!-- Personal Info Card -->
+            <div class="settings-card">
+                <div class="card-heading">Personal Details</div>
+                
+                <div class="field-group">
+                    <label class="field-label">Full Name</label>
+                    <input type="text" id="nameInput" class="input-box" value="Mukesh Ku. Dandpat">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Phone Number (Odisha Registered)</label>
+                    <input type="tel" class="input-box" value="+91 81448 xxxxx" disabled style="background:#eee; color:#666;">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Email Address</label>
+                    <input type="email" id="emailInput" class="input-box" value="mk.dandpat@vahanmitra.in">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Home District (Odisha)</label>
+                    <select id="districtSelect" class="input-box" style="cursor: pointer;">
+                        <option value="Khordha">Khordha (Bhubaneswar)</option>
+                        <option value="Cuttack">Cuttack</option>
+                        <option value="Puri">Puri</option>
+                        <option value="Ganjam">Ganjam (Berhampur)</option>
+                        <option value="Sambalpur">Sambalpur</option>
+                        <option value="Sundargarh">Sundargarh (Rourkela)</option>
+                        <option value="Balasore" selected>Balasore</option>
+                        <option value="Bhadrak">Bhadrak</option>
+                        <option value="Angul">Angul</option>
+                        <option value="Bargarh">Bargarh</option>
+                        <option value="Balangir">Balangir</option>
+                        <option value="Boudh">Boudh</option>
+                        <option value="Deogarh">Deogarh</option>
+                        <option value="Dhenkanal">Dhenkanal</option>
+                        <option value="Gajapati">Gajapati</option>
+                        <option value="Jagatsinghpur">Jagatsinghpur</option>
+                        <option value="Jajpur">Jajpur</option>
+                        <option value="Jharsuguda">Jharsuguda</option>
+                        <option value="Kalahandi">Kalahandi</option>
+                        <option value="Kandhamal">Kandhamal</option>
+                        <option value="Kendrapara">Kendrapara</option>
+                        <option value="Kendujhar">Kendujhar</option>
+                        <option value="Koraput">Koraput</option>
+                        <option value="Malkangiri">Malkangiri</option>
+                        <option value="Mayurbhanj">Mayurbhanj</option>
+                        <option value="Nabarangpur">Nabarangpur</option>
+                        <option value="Nayagarh">Nayagarh</option>
+                        <option value="Nuapada">Nuapada</option>
+                        <option value="Rayagada">Rayagada</option>
+                        <option value="Sonepur">Sonepur</option>
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Gender</label>
+                    <div class="gender-options">
+                        <div class="gender-btn active" onclick="setGender(this)">Male</div>
+                        <div class="gender-btn" onclick="setGender(this)">Female</div>
+                        <div class="gender-btn" onclick="setGender(this)">Transgender</div>
+                    </div>
+                </div>
+
+                <button class="save-btn" style="width: 100%;" onclick="saveProfileChanges()">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Profile Details
+                </button>
+            </div>
+
+            <!-- Saved Addresses -->
+            <div class="settings-card">
+                <div class="card-heading">
+                    <span>Saved Addresses</span>
+                    <span style="color: #1a5c54; cursor: pointer;" onclick="addAddressPrompt()">+ Add New</span>
+                </div>
+
+                <div class="place-item">
+                    <div class="place-icon"><i class="fa-solid fa-house"></i></div>
+                    <div class="place-details">
+                        <div class="place-name">Home</div>
+                        <div class="place-address">Plot 104, Saheed Nagar, Bhubaneswar, Odisha</div>
+                    </div>
+                    <div class="place-action"><i class="fa-solid fa-chevron-right"></i></div>
+                </div>
+
+                <div class="place-item">
+                    <div class="place-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="place-details">
+                        <div class="place-name">Office / Work</div>
+                        <div class="place-address">Infocity, Patia, Bhubaneswar, Odisha</div>
+                    </div>
+                    <div class="place-action"><i class="fa-solid fa-chevron-right"></i></div>
+                </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="settings-card">
+                <div class="card-heading">Language Preference</div>
+                <div class="lang-pills">
+                    <div class="lang-pill active" onclick="setLang(this)">ଓଡ଼ିଆ (Odia)</div>
+                    <div class="lang-pill" onclick="setLang(this)">English</div>
+                    <div class="lang-pill" onclick="setLang(this)">हिंदी (Hindi)</div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="settings-card">
+                <a href="wallet.html" class="menu-row">
+                    <div class="menu-left"><i class="fa-solid fa-wallet"></i> Vahan Wallet</div>
+                    <div class="menu-right"><span>₹320.00</span> <i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+                <a href="offers.html" class="menu-row">
+                    <div class="menu-left"><i class="fa-solid fa-percent"></i> Offers & Coupons</div>
+                    <div class="menu-right"><span>4 Active</span> <i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+                <a href="rides.html" class="menu-row">
+                    <div class="menu-left"><i class="fa-solid fa-clock-rotate-left"></i> Ride History</div>
+                    <div class="menu-right"><i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+            </div>
+
+            <!-- Logout -->
+            <div class="logout-btn" onclick="logoutUser()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Log Out of Vahan Mitra</span>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="toastMessage">
+            <i class="fa-solid fa-circle-check" style="color: #d4a843;"></i>
+            <span id="toastText">Profile updated successfully!</span>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="rides.html" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Rides</span>
+            </a>
+            <a href="wallet.html" class="nav-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="offers.html" class="nav-item">
+                <i class="fa-solid fa-tag"></i>
+                <span>Offers</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <i class="fa-solid fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Hidden file input for avatar -->
+    <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toastMessage');
+            const text = document.getElementById('toastText');
+            text.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        function setGender(btn) {
+            document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function setLang(btn) {
+            document.querySelectorAll('.lang-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            showToast("Language changed to " + btn.innerText);
+        }
+
+        function toggleEdit() {
+            document.getElementById('nameInput').focus();
+            showToast("Edit mode active");
+        }
+
+        function uploadPhotoTrigger() {
+            document.getElementById('avatarFileInput').click();
+        }
+
+        function handleImageSelect(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('profileImage').src = evt.target.result;
+                    showToast("Profile photo updated!");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfileChanges() {
+            const name = document.getElementById('nameInput').value.trim();
+            const dist = document.getElementById('districtSelect').value;
+            if(name) {
+                document.getElementById('displayName').innerText = name;
+            }
+            showToast(`Saved! District: ${dist}`);
+        }
+
+        function addAddressPrompt() {
+            const address = prompt("Enter new Odisha address label (e.g. Gym, Friend, Temple):");
+            if(address) {
+                showToast(`Address "${address}" added!`);
+            }
+        }
+
+        function logoutUser() {
+            if(confirm("Are you sure you want to log out of Vahan Mitra?")) {
+                showToast("Logging out...");
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
